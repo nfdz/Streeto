@@ -1,0 +1,30 @@
+{
+    "app_name": "Streeto",
+    "main": {
+        "search_hint": "Type an street..",
+        "permissions_needed": "You have to grant location permission in order to compute the distances and get the best recommendations",
+        "permissions_btn": "Grant",
+        "permissions_btn_aux": "System Settings",
+        "location_error": "It is not possible to get your location. Please check that your location is active and working.",
+        "location_retry_btn": "Retry",
+        "error": "It is not possible to get the recommendations. Please check that you have an Internet connection available.",
+        "empty_result": "Oops! There is no result!",
+        "favorites": "Favorites",
+        "sort_name": "Sort by name",
+        "sort_distance": "Sort by distance"
+    },
+    "details": {
+        "title": "Details",
+        "load_retry": "Retry",
+        "load_error": "It is not possible to get the location details. Please check that you have an Internet connection available.",
+        "street": "Street: ",
+        "postal_code": "Postal Code: ",
+        "coordinates": "Coordinates: ",
+        "distance": "Distance: ",
+        "favorite_add": "Add to Favorites ❤️",
+        "favorite_remove": "Remove from Favorites 💔"
+    },
+    "favorites": {
+        "title": "Favorites"
+    }
+}
