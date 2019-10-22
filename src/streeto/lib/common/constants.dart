@@ -45,8 +45,8 @@ const String kDbPath = "streeto.db";
 const int kDbVersion = 1;
 
 // API settings
-const String kHereApiAppId = "{API_APP_ID}";
-const String kHereApiAppCode = "{API_APP_CODE}";
+const String kHereApiAppId = "";
+const String kHereApiAppCode = "";
 
 // Mock settings
 const double kMockLocationLat = 37.3817273194;

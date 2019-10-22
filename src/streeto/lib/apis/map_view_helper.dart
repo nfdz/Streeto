@@ -6,7 +6,7 @@ class MapViewHelper {
 
   static String getMapImageUrl(double lat, double lon, int width, int height) {
     return Uri.encodeFull(
-        "$_kBaseUrl?app_id=$kHereApiAppId&app_code=$kHereApiAppCode&c=$lat,$lon&w=$width&h=$height&pip");
+        "$_kBaseUrl?app_id=$kHereApiAppId&app_code=$kHereApiAppCode&c=$lat,$lon&w=$width&h=$height&pip&z=16");
   }
 
   static String getMapGroupImageUrl(List<Pair<double, double>> latLonPairs, int width, int height) {

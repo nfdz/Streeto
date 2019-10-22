@@ -9,6 +9,24 @@ buildscript {
         classpath 'com.android.tools.build:gradle:3.2.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
+
+     // Resolve conflict between external flutter libraries
+    subprojects {
+        project.configurations.all {
+            resolutionStrategy.eachDependency { details ->
+
+                if (details.requested.group == 'androidx.core'
+                        && details.requested.name.contains('core') ) {
+                    details.useVersion "1.1.0"
+                }
+                if (details.requested.group == 'androidx.versionedparcelable'
+                        && details.requested.name.contains('versionedparcelable') ) {
+                    details.useVersion "1.1.0"
+                }
+
+            }
+        }
+    }
 }
 
 allprojects {

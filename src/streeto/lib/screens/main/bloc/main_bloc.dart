@@ -22,8 +22,10 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     if (event is CheckLocation) {
       yield await handleCheckLocationEvent();
     } else if (event is RequestPermissions) {
-      await _locationsService.requestLocationPermissions();
-      yield await handleCheckLocationEvent();
+      bool granted = await _locationsService.requestLocationPermissions();
+      if (granted) {
+        yield await handleCheckLocationEvent();
+      }
     } else if (event is CheckSystemSettings) {
       await _locationsService.checkSystemSettings();
     } else if (event is SearchLocations) {

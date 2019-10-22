@@ -60,18 +60,19 @@ class LocationsServiceImpl extends LocationsService {
 
   @override
   Future<bool> checkCurrentLocation() async {
-    bool hasPermissions = await checkPermissions();
-    if (hasPermissions) {
-      bool hasLocation = await getLocationIfNeeded();
-      return hasLocation;
-    } else {
-      throw PermissionsNeededException();
-    }
+    bool hasLocation = await getLocationIfNeeded();
+    return hasLocation;
   }
 
   @override
   Future<bool> requestLocationPermissions() async {
-    return await requestPermissions();
+    bool hasPermissions = await checkPermissions();
+    if (hasPermissions) {
+      return true;
+    }
+    Map<PermissionGroup, PermissionStatus> permissions =
+        await PermissionHandler().requestPermissions([PermissionGroup.location]);
+    return permissions[PermissionGroup.location] == PermissionStatus.granted;
   }
 
   @override
@@ -88,12 +89,6 @@ class LocationsServiceImpl extends LocationsService {
     }
   }
 
-  Future<bool> requestPermissions() async {
-    Map<PermissionGroup, PermissionStatus> permissions =
-        await PermissionHandler().requestPermissions([PermissionGroup.location]);
-    return permissions[PermissionGroup.location] == PermissionStatus.granted;
-  }
-
   Future<bool> getLocationIfNeeded() async {
     if (mockLocation) {
       _userPosition = Position(latitude: kMockLocationLat, longitude: kMockLocationLon);
@@ -105,6 +100,14 @@ class LocationsServiceImpl extends LocationsService {
   }
 
   Future<Position> tryGetCurrentLocation() async {
+    ServiceStatus serviceStatus = await PermissionHandler().checkServiceStatus(PermissionGroup.location);
+    if (serviceStatus != ServiceStatus.enabled) {
+      return null;
+    }
+    bool hasPermissions = await checkPermissions();
+    if (!hasPermissions) {
+      throw PermissionsNeededException();
+    }
     try {
       return await Geolocator()
           .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
