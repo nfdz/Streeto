@@ -1,5 +1,10 @@
 {
     "app_name": "Streeto",
+    "map_click": "Click on the map to open navigation",
+    "navigation_provider": "Navigation provider",
+    "navigation_google": "Google",
+    "navigation_here": "Here",
+    "navigation_apple": "Apple",
     "main": {
         "search_hint": "Type an street..",
         "permissions_needed": "You have to grant location permission in order to compute the distances and get the best recommendations",
@@ -10,8 +15,9 @@
         "error": "It is not possible to get the recommendations. Please check that you have an Internet connection available.",
         "empty_result": "Oops! There is no result!",
         "favorites": "Favorites",
-        "sort_name": "Sort by name",
-        "sort_distance": "Sort by distance"
+        "sort": "Sort by",
+        "sort_name": "Name",
+        "sort_distance": "Distance"
     },
     "details": {
         "title": "Details",

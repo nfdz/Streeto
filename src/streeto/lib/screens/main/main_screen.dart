@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
 import 'package:streeto/common/constants.dart';
+import 'package:streeto/common/dialogs/navigation_provider.dart';
 import 'package:streeto/common/dimensions.dart';
 import 'package:streeto/common/texts/global_texts.dart';
 import 'package:streeto/common/texts/main_texts.dart';
@@ -50,17 +51,26 @@ class _MainScreenState extends State<MainScreen> {
         centerTitle: true,
         actions: <Widget>[
           // overflow menu
-          PopupMenuButton<SuggestionsSort>(
-            onSelected: (sort) => _bloc.dispatch(MainEvent.sortSuggestions(sort)),
+          PopupMenuButton<int>(
+            onSelected: (index) {
+              switch (index) {
+                case 0:
+                  _askSortDialog();
+                  break;
+                case 1:
+                  _askNavigationDialog();
+                  break;
+              }
+            },
             itemBuilder: (BuildContext context) {
               return [
-                PopupMenuItem<SuggestionsSort>(
-                  value: SuggestionsSort.BY_NAME,
-                  child: Text(MainTexts.sortName(context)),
+                PopupMenuItem<int>(
+                  value: 0,
+                  child: Text(MainTexts.sort(context)),
                 ),
-                PopupMenuItem<SuggestionsSort>(
-                  value: SuggestionsSort.BY_DISTANCE,
-                  child: Text(MainTexts.sortDistance(context)),
+                PopupMenuItem<int>(
+                  value: 1,
+                  child: Text(GlobalTexts.navigationProvider(context)),
                 ),
               ];
             },
@@ -84,6 +94,33 @@ class _MainScreenState extends State<MainScreen> {
         onPressed: () => Navigator.pushNamed(context, FavoritesScreen.route),
       ),
     );
+  }
+
+  Future<void> _askSortDialog() async {
+    final sort = await showDialog<SuggestionsSort>(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            title: Text(MainTexts.sort(context)),
+            children: <Widget>[
+              SimpleDialogOption(
+                onPressed: () => Navigator.pop(context, SuggestionsSort.BY_DISTANCE),
+                child: Text(MainTexts.sortDistance(context)),
+              ),
+              SimpleDialogOption(
+                onPressed: () => Navigator.pop(context, SuggestionsSort.BY_NAME),
+                child: Text(MainTexts.sortName(context)),
+              ),
+            ],
+          );
+        });
+    if (sort != null) _bloc.dispatch(MainEvent.sortSuggestions(sort));
+  }
+
+  Future<void> _askNavigationDialog() async {
+    final nav = await askNavigationDialog(context);
+    if (nav != null) _bloc.dispatch(MainEvent.setNavigation(nav));
   }
 }
 

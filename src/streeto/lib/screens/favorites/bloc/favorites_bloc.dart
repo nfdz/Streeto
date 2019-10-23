@@ -4,6 +4,7 @@ import 'package:streeto/common/pair.dart';
 import 'package:streeto/model/location_details.dart';
 import 'package:streeto/persistences/favorites/favorites_persistence.dart';
 import 'package:streeto/persistences/persistences_locator.dart';
+import 'package:streeto/persistences/preferences/preferences.dart';
 import 'package:streeto/screens/favorites/bloc/favorites_event.dart';
 import 'package:streeto/screens/favorites/bloc/favorites_state.dart';
 import 'package:streeto/services/locations/locations_service.dart';
@@ -15,6 +16,7 @@ class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
   final MapsService _mapsService = ServicesLocator.getService<MapsService>();
   final LocationsService _locationsService = ServicesLocator.getService<LocationsService>();
   final FavoritesPersistence _favsPersistence = PersistencesLocator.getPersistence<FavoritesPersistence>();
+  final Preferences preferences = PersistencesLocator.getPersistence<Preferences>();
   List<LocationDetails> _favorites;
   LocationDetails _selectedLocation;
   int _mapHeight;
@@ -34,10 +36,19 @@ class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
       _selectedLocation = event.location;
       yield await _getContent();
     } else if (event is OpenNavigation) {
-      if (_selectedLocation != null) {
-        _locationsService.openNavigation(_selectedLocation);
+      final nav = await preferences.getNavigationProvider();
+      if (_selectedLocation != null && nav != null) {
+        _locationsService.openNavigation(_selectedLocation, nav);
       }
+    } else if (event is SetNavigation) {
+      await preferences.setNavigationProvider(event.nav);
+      yield await _getContent();
     }
+  }
+
+  Future<bool> _isNavigationEnabled() async {
+    final nav = await preferences.getNavigationProvider();
+    return nav != null;
   }
 
   Future<FavoritesState> _getContent() async {
@@ -59,6 +70,7 @@ class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
         _mapHeight,
       );
     }
-    return FavoritesState.content(_favorites, _selectedLocation, mapImageUrl);
+    bool isNavigationEnabled = await _isNavigationEnabled();
+    return FavoritesState.content(_favorites, _selectedLocation, mapImageUrl, isNavigationEnabled);
   }
 }

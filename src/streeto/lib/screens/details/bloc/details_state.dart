@@ -4,9 +4,9 @@ import 'package:streeto/model/location_details.dart';
 @immutable
 abstract class DetailsState {
   static DetailsState loading() => Loading();
-  static DetailsState detailsContent(
-          LocationDetails details, double distanceInMeters, String mapImageUrl, bool isFavorite) =>
-      DetailsContent(details, distanceInMeters, mapImageUrl, isFavorite);
+  static DetailsState detailsContent(LocationDetails details, double distanceInMeters, String mapImageUrl,
+          bool isFavorite, bool navigationEnabled) =>
+      DetailsContent(details, distanceInMeters, mapImageUrl, isFavorite, navigationEnabled);
   static DetailsState loadDetailsError() => LoadDetailsError();
 
   void accept(DetailsStateVisitor visitor);
@@ -27,7 +27,8 @@ class DetailsContent extends DetailsState {
   final double distanceInMeters;
   final String mapImageUrl;
   final bool isFavorite;
-  DetailsContent(this.details, this.distanceInMeters, this.mapImageUrl, this.isFavorite);
+  final bool navigationEnabled;
+  DetailsContent(this.details, this.distanceInMeters, this.mapImageUrl, this.isFavorite, this.navigationEnabled);
 
   @override
   void accept(DetailsStateVisitor visitor) => visitor.visitDetails(this);

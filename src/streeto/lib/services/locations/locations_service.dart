@@ -1,5 +1,6 @@
 import 'package:streeto/model/location_details.dart';
 import 'package:streeto/model/location_suggestion.dart';
+import 'package:streeto/persistences/preferences/preferences.dart';
 import 'package:streeto/services/service.dart';
 
 abstract class LocationsService extends Service {
@@ -8,7 +9,7 @@ abstract class LocationsService extends Service {
   Future<bool> requestLocationPermissions();
   Future<bool> checkSystemSettings();
   Future<LocationDetails> getDetails(String locationId, String label);
-  Future<bool> openNavigation(LocationDetails location);
+  Future<bool> openNavigation(LocationDetails location, NavigationProvider nav);
 }
 
 class PermissionsNeededException implements Exception {

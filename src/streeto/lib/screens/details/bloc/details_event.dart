@@ -1,5 +1,6 @@
 import 'package:meta/meta.dart';
 import 'package:streeto/model/location_suggestion.dart';
+import 'package:streeto/persistences/preferences/preferences.dart';
 
 @immutable
 abstract class DetailsEvent {
@@ -9,6 +10,14 @@ abstract class DetailsEvent {
   static DetailsEvent retryLoadDetails() => RetryLoadDetails();
   static DetailsEvent addFavorite() => AddFavorite();
   static DetailsEvent removeFavorite() => RemoveFavorite();
+  static DetailsEvent setNavigation(NavigationProvider nav) => SetNavigation(nav);
+}
+
+class SetNavigation extends DetailsEvent {
+  final NavigationProvider nav;
+  SetNavigation(this.nav);
+  @override
+  String toString() => "SetNavigation(nav: '$nav')";
 }
 
 class OpenNavigation extends DetailsEvent {}

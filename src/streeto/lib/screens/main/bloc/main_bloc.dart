@@ -50,6 +50,8 @@ class MainBloc extends Bloc<MainEvent, MainState> {
         yield MainState.searchResult(_sortResult(previousState.locations, event.sort));
       }
       await preferences.setSuggestionsSort(event.sort);
+    } else if (event is SetNavigation) {
+      await preferences.setNavigationProvider(event.nav);
     }
   }
 

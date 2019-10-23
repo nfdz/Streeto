@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
+import 'package:streeto/common/dialogs/navigation_provider.dart';
+import 'package:streeto/common/texts/global_texts.dart';
 import 'package:streeto/common/widgets/cached_image.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:streeto/common/constants.dart';
@@ -45,13 +47,13 @@ class _DetailsScreenState extends State<DetailsScreen> {
       _isInitialized = true;
       LocationSuggestion location = ModalRoute.of(context).settings.arguments;
       if (location == null) {
-        _logger.severe("Place screen initialized with NULL location");
+        _logger.severe("Details screen initialized with NULL location");
         Navigator.pop(context);
       } else {
         // Determine map resolution depending screen
-        final shortestSide = MediaQuery.of(context).size.shortestSide;
-        double mapWidth = shortestSide;
-        double mapHeight = shortestSide;
+        final size = MediaQuery.of(context).size.shortestSide;
+        double mapWidth = size;
+        double mapHeight = size;
         _bloc.dispatch(DetailsEvent.loadDetails(location, mapWidth, mapHeight));
       }
     }
@@ -84,8 +86,16 @@ class WidgetBuilder extends DetailsStateVisitor {
   void visitDetails(DetailsContent content) {
     widget = ResponsiveDetails(
       content,
-      onMapPressed: () {
-        _bloc.dispatch(DetailsEvent.openNavigation());
+      onMapPressed: () async {
+        if (content.navigationEnabled == true) {
+          _bloc.dispatch(DetailsEvent.openNavigation());
+        } else {
+          final nav = await askNavigationDialog(_context);
+          if (nav != null) {
+            _bloc.dispatch(DetailsEvent.setNavigation(nav));
+            _bloc.dispatch(DetailsEvent.openNavigation());
+          }
+        }
       },
       onFavoritePressed: () {
         _bloc.dispatch(content.isFavorite ? DetailsEvent.removeFavorite() : DetailsEvent.addFavorite());
@@ -120,14 +130,16 @@ class ResponsiveDetails extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    return OrientationBuilder(
-      builder: (context, orientation) {
-        final List<Widget> children = [
-          Expanded(child: LocationMapImage(content.mapImageUrl, onMapPressed)),
-          Expanded(child: DetailsColumn(content, onFavoritePressed)),
-        ];
-        return orientation == Orientation.portrait ? Column(children: children) : Row(children: children);
-      },
+    return Center(
+      child: OrientationBuilder(
+        builder: (context, orientation) {
+          final List<Widget> children = [
+            Expanded(child: LocationMapImage(content.mapImageUrl, onMapPressed)),
+            Expanded(child: DetailsColumn(content, onFavoritePressed)),
+          ];
+          return orientation == Orientation.portrait ? Column(children: children) : Row(children: children);
+        },
+      ),
     );
   }
 }
@@ -138,14 +150,23 @@ class LocationMapImage extends StatelessWidget {
   LocationMapImage(this.mapImageUrl, this.onPressed);
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: FadeInCachedImage(
-        width: double.infinity,
-        height: double.infinity,
-        image: mapImageUrl,
-        placeholder: kTransparentImage,
-        fit: BoxFit.contain,
+    return Padding(
+      padding: dimenMapPadding(getScreenType(context)),
+      child: GestureDetector(
+        onTap: onPressed,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Expanded(
+              child: FadeInCachedImage(
+                image: mapImageUrl,
+                placeholder: kTransparentImage,
+                fit: BoxFit.contain,
+              ),
+            ),
+            if (onPressed != null) Text(GlobalTexts.mapClick(context), style: kSmallBoldTextStyle),
+          ],
+        ),
       ),
     );
   }

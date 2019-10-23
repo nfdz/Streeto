@@ -1,12 +1,15 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:logging/logging.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:streeto/apis/apple_maps_helper.dart';
 import 'package:streeto/apis/chopper_api_provider.dart';
 import 'package:streeto/apis/geocoder_autocomplete_api.dart';
+import 'package:streeto/apis/google_maps_helper.dart';
 import 'package:streeto/apis/here_wego_helper.dart';
 import 'package:streeto/common/constants.dart';
 import 'package:streeto/model/location_details.dart';
 import 'package:streeto/model/location_suggestion.dart';
+import 'package:streeto/persistences/preferences/preferences.dart';
 import 'package:streeto/services/locations/locations_service.dart';
 import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
 
@@ -143,16 +146,20 @@ class LocationsServiceImpl extends LocationsService {
   }
 
   @override
-  Future<bool> openNavigation(LocationDetails location) async {
+  Future<bool> openNavigation(LocationDetails location, NavigationProvider nav) async {
     if (location != null) {
-      String navUrl = _userPosition != null
-          ? HereWeGoHelper.buildNavigationUrl(
-              _userPosition.latitude,
-              _userPosition.longitude,
-              location.lat,
-              location.lon,
-            )
-          : HereWeGoHelper.buildMapUrl(location.lat, location.lon);
+      String navUrl;
+      switch (nav) {
+        case NavigationProvider.HERE:
+          navUrl = getHereNavigationUrl(location);
+          break;
+        case NavigationProvider.GOOGLE:
+          navUrl = GoogleMapsHelper.buildNavigationUrl(location.lat, location.lon);
+          break;
+        case NavigationProvider.APPLE:
+          navUrl = AppleMapsHelper.buildNavigationUrl(location.lat, location.lon);
+          break;
+      }
       if (await UrlLauncher.canLaunch(navUrl)) {
         await UrlLauncher.launch(navUrl);
         return true;
@@ -161,5 +168,16 @@ class LocationsServiceImpl extends LocationsService {
       }
     }
     return false;
+  }
+
+  String getHereNavigationUrl(LocationDetails location) {
+    return _userPosition != null
+        ? HereWeGoHelper.buildNavigationUrlWithOrigin(
+            _userPosition.latitude,
+            _userPosition.longitude,
+            location.lat,
+            location.lon,
+          )
+        : HereWeGoHelper.buildNavigationUrl(location.lat, location.lon);
   }
 }

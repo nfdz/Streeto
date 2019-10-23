@@ -3,6 +3,7 @@ import 'package:streeto/persistences/preferences/preferences.dart';
 
 class PreferencesMock extends Preferences {
   SuggestionsSort _sort = kDefaultSuggestionsSort;
+  NavigationProvider _nav;
 
   @override
   Future<void> clearPersistence() async {
@@ -20,5 +21,17 @@ class PreferencesMock extends Preferences {
   Future<void> setSuggestionsSort(SuggestionsSort sort) async {
     doFakeDelayIfNeeded();
     _sort = sort;
+  }
+
+  @override
+  Future<NavigationProvider> getNavigationProvider() async {
+    doFakeDelayIfNeeded();
+    return _nav;
+  }
+
+  @override
+  Future<void> setNavigationProvider(NavigationProvider nav) async {
+    doFakeDelayIfNeeded();
+    _nav = nav;
   }
 }

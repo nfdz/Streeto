@@ -1,6 +1,7 @@
 import 'package:streeto/common/constants.dart';
 import 'package:streeto/model/location_details.dart';
 import 'package:streeto/model/location_suggestion.dart';
+import 'package:streeto/persistences/preferences/preferences.dart';
 import 'package:streeto/services/locations/locations_service.dart';
 
 class LocationsServiceMock extends LocationsService {
@@ -49,7 +50,7 @@ class LocationsServiceMock extends LocationsService {
   }
 
   @override
-  Future<bool> openNavigation(LocationDetails location) async {
+  Future<bool> openNavigation(LocationDetails location, NavigationProvider nav) async {
     await doFakeDelayIfNeeded();
     return true;
   }

@@ -29,6 +29,11 @@ const TextStyle kContentTextStyle = TextStyle(
   color: Colors.black,
   fontSize: 16,
 );
+const TextStyle kSmallBoldTextStyle = TextStyle(
+  color: Colors.black,
+  fontSize: 12,
+  fontWeight: FontWeight.bold,
+);
 
 // Animations
 const kFadeImageDuration = Duration(milliseconds: 400);
@@ -45,8 +50,8 @@ const String kDbPath = "streeto.db";
 const int kDbVersion = 1;
 
 // API settings
-const String kHereApiAppId = "";
-const String kHereApiAppCode = "";
+const String kHereApiAppId = "{API_APP_ID_HERE}";
+const String kHereApiAppCode = "{API_APP_CODE_HERE}";
 
 // Mock settings
 const double kMockLocationLat = 37.3817273194;

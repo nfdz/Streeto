@@ -15,6 +15,7 @@ class MainTexts {
   static String favorites(BuildContext context) => _getText(context, "favorites");
   static String sortDistance(BuildContext context) => _getText(context, "sort_distance");
   static String sortName(BuildContext context) => _getText(context, "sort_name");
+  static String sort(BuildContext context) => _getText(context, "sort");
 
   static String _getText(BuildContext context, String key) => TextsProvider.getText(context, "$_kGlobalKey.$key");
 }

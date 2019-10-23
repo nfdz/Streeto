@@ -17,6 +17,8 @@ EdgeInsets dimenAlertContentPadding(ScreenType screen) =>
 double dimenAlertContentImageSize(ScreenType screen) => screen == ScreenType.REGULAR ? 90 : 220;
 EdgeInsets dimenAlertContentTextPadding(ScreenType screen) =>
     screen == ScreenType.REGULAR ? const EdgeInsets.all(18.0) : const EdgeInsets.all(40.0);
+EdgeInsets dimenMapPadding(ScreenType screen) =>
+    screen == ScreenType.REGULAR ? const EdgeInsets.all(8.0) : const EdgeInsets.all(16.0);
 
 // Main
 EdgeInsets dimenMainLocationEntryPadding(ScreenType screen) => screen == ScreenType.REGULAR
@@ -39,4 +41,4 @@ EdgeInsets dimenFavsListViewPadding(ScreenType screen) =>
     screen == ScreenType.REGULAR ? const EdgeInsets.symmetric(vertical: 16) : const EdgeInsets.symmetric(vertical: 16);
 EdgeInsets dimenFavsLocationEntryPadding(ScreenType screen) => screen == ScreenType.REGULAR
     ? const EdgeInsets.symmetric(horizontal: 38)
-    : const EdgeInsets.symmetric(horizontal: 120, vertical: 4);
+    : const EdgeInsets.symmetric(horizontal: 100, vertical: 4);

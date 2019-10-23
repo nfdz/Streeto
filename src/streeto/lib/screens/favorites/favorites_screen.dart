@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
+import 'package:streeto/common/dialogs/navigation_provider.dart';
+import 'package:streeto/common/texts/global_texts.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:streeto/common/constants.dart';
 import 'package:streeto/common/dimensions.dart';
@@ -76,7 +78,19 @@ class ResponsiveContent extends StatelessWidget {
             Expanded(
               child: FavoritesMapImage(
                 _state.mapImageUrl,
-                onMapPressed: _state.selected != null ? () => _bloc.dispatch(FavoritesEvent.openNavigation()) : null,
+                onMapPressed: _state.selected != null
+                    ? () async {
+                        if (_state.navigationEnabled == true) {
+                          _bloc.dispatch(FavoritesEvent.openNavigation());
+                        } else {
+                          final nav = await askNavigationDialog(context);
+                          if (nav != null) {
+                            _bloc.dispatch(FavoritesEvent.setNavigation(nav));
+                            _bloc.dispatch(FavoritesEvent.openNavigation());
+                          }
+                        }
+                      }
+                    : null,
               ),
             ),
           Expanded(
@@ -90,7 +104,6 @@ class ResponsiveContent extends StatelessWidget {
                 final isSelected = _state.selected?.locationId == location.locationId;
                 return FavoriteEntry(
                   location,
-                  position,
                   isSelected,
                   dimenFavsLocationEntryPadding(screen),
                   onPressed: () => _bloc.dispatch(FavoritesEvent.selectLocation(isSelected ? null : location)),
@@ -111,15 +124,25 @@ class FavoritesMapImage extends StatelessWidget {
   FavoritesMapImage(this.mapImageUrl, {this.onMapPressed});
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onMapPressed,
-      child: FadeInImage.memoryNetwork(
-        width: double.infinity,
-        height: double.infinity,
-        image: mapImageUrl,
-        fadeInDuration: kFadeImageDuration,
-        placeholder: kTransparentImage,
-        fit: BoxFit.contain,
+    return Padding(
+      padding: dimenMapPadding(getScreenType(context)),
+      child: GestureDetector(
+        onTap: onMapPressed,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Expanded(
+              child: FadeInImage.memoryNetwork(
+                image: mapImageUrl,
+                fadeInDuration: kFadeImageDuration,
+                placeholder: kTransparentImage,
+                fit: BoxFit.contain,
+              ),
+            ),
+            if (onMapPressed != null) Text(GlobalTexts.mapClick(context), style: kSmallBoldTextStyle),
+          ],
+        ),
       ),
     );
   }
@@ -127,12 +150,10 @@ class FavoritesMapImage extends StatelessWidget {
 
 class FavoriteEntry extends StatelessWidget {
   final LocationDetails location;
-  final int position;
   final VoidCallback onPressed;
   final bool isSelected;
   final EdgeInsets padding;
-  FavoriteEntry(this.location, this.position, this.isSelected, this.padding, {this.onPressed})
-      : super(key: Key(location.locationId));
+  FavoriteEntry(this.location, this.isSelected, this.padding, {this.onPressed}) : super(key: Key(location.locationId));
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +162,7 @@ class FavoriteEntry extends StatelessWidget {
       child: Card(
         color: isSelected ? kAccentColor : null,
         child: ListTile(
-          title: Text("${position + 1}) ${location.label}", key: Key("favorites.location_entry.label")),
+          title: Text("${location.label}", key: Key("favorites.location_entry.label")),
           subtitle: Text("${location.lat}, ${location.lon}"),
           onTap: onPressed,
         ),

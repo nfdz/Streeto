@@ -8,6 +8,7 @@ abstract class MainEvent {
   static MainEvent checkSystemSettings() => CheckSystemSettings();
   static MainEvent searchLocations(String query) => SearchLocations(query);
   static MainEvent sortSuggestions(SuggestionsSort sort) => SortSuggestions(sort);
+  static MainEvent setNavigation(NavigationProvider nav) => SetNavigation(nav);
 }
 
 class CheckLocation extends MainEvent {}
@@ -21,6 +22,13 @@ class SortSuggestions extends MainEvent {
   SortSuggestions(this.sort);
   @override
   String toString() => "SortSuggestions(sort: '$sort')";
+}
+
+class SetNavigation extends MainEvent {
+  final NavigationProvider nav;
+  SetNavigation(this.nav);
+  @override
+  String toString() => "SetNavigation(nav: '$nav')";
 }
 
 class SearchLocations extends MainEvent {
