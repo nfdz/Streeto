@@ -1,8 +1,9 @@
 # Streeto
-Street to me! This tiny app will find any street/location you need even with extreme low internet
+
+Find any street you need even with very little internet connection.
 
 ## Flutter
-This application was developed in Dart for Flutter framework. It has interesting features like:
+
 * BLoC pattern.
 * Dependencies injection.
 * NoSQL database.
@@ -20,10 +21,6 @@ This application was developed in Dart for Flutter framework. It has interesting
   <img src="dev/screenshots/en_2.png?raw=true" width="250" alt="Streeto"/>
   <img src="dev/screenshots/en_3.png?raw=true" width="250" alt="Streeto"/>
 </p>
-
-## Roadmap
-* Cache services data and queries.
-* Expire user location and implement force refresh location.
 
 ## License
 
